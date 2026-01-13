@@ -3,7 +3,9 @@
 This project is a music downloader utility built to explore **asynchronous Python**, **web scraping**, and **API integration**. It fetches metadata from Spotify, retrieves audio via YouTube, and injects ID3 tags into the resulting MP3 files.
 
 **Note:** This is an educational project for portfolio purposes. It is not intended for deployment or piracy.
+---
 
+https://github.com/user-attachments/assets/f0cc0e8f-cb39-48b8-9ee4-34d705812d02
 ---
 
 ## Tech Stack
@@ -38,6 +40,8 @@ The core logic resides in the `download` view, which follows a strict pipeline:
 - **Metadata Extraction:** Pulls track titles, artists, and high-res album art from Spotify.
     
 - **Sanitization:** Cleans strings to ensure filesystem compatibility across different OS environments.
+
+- **Download** Uses fetched metadata from spotify to query youtube and download audio with yt-dlp. FFMPEG turns audio to mp3.
     
 - **Concurrent Execution:** Uses `asyncio.gather` with defined chunk sizes to download audio while managing rate limits and system resources.
     
