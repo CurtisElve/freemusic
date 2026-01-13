@@ -1,67 +1,57 @@
-# Freemusic!!! - spotify localizer developer project
+# freemusic
 
-A little wrapper around yt-dlp that integrates with the Spotify API, letting you manage your music library through a cute web interface. You can download all your playlists, songs, albums, recently played, top artists and more!!
+This project is a music downloader utility built to explore **asynchronous Python**, **web scraping**, and **API integration**. It fetches metadata from Spotify, retrieves audio via YouTube, and injects ID3 tags into the resulting MP3 files.
 
-## Features
+**Note:** This is an educational project for portfolio purposes. It is not intended for deployment or piracy.
 
-- Sign in with your Spotify account using OAuth2
-- Download your entire library, playlists, or specific albums concurrently
-- Clean, simple web interface with tailwind + django
-- Powered by yt-dlp and uses spotify metadata for accurate tagging and album covers
+---
 
-## How to install:
+## Tech Stack
 
-### Docker (very easy)
+- **Backend:** Django
+    
+- **APIs:** Spotipy (Spotify Web API)
+    
+- **Audio Engine:** `yt-dlp`
+    
+- **Metadata:** `eyed3`
+    
+- **Concurrency:** `asyncio` & `asgiref`
+    
+- **Frontend** Django Templates + Tailwind
+---
 
-The easiest way to get up and running:
+## Technical Logic
 
-```bash
-docker compose up --build -d
-```
+### 1. Asynchronous API Wrapper
 
-Then just head to `http://127.0.0.1:8000` and you're good to go!
-**note that due to the most recent spotify api changes localhost will not work; only the ip literal!
+Since the standard Spotify library is synchronous, I implemented an `AsyncSpotify` class. By wrapping calls in `sync_to_async`, the application handles data fetching (playlists, tracks, top artists) without blocking the event loop.
 
-### Option 2: Local Setup (super hairy)
+### 2. Authentication Flow
 
-If you prefer running things locally:
-0. **You must have ffmpeg installed on your machine - https://www.ffmpeg.org/**
+The app utilizes Spotify OAuth to access user-specific data. Session tokens are managed to allow browsing of private libraries, recently played tracks, and personalized playlists.
 
-1. Create a virtual environment:
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: scripts/activate.ps1
-   ```
+### 3. Download & Metadata Pipeline
 
-2. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-3. Set up your environment:
-   ```
-   export SPOTIPY_REDIRECT_URI='http://127.0.0.1:8000/App/spotify_callback'
-   export DJANGO_SETTINGS_MODULE='Site.settings'
-   ```
-4. Fire it up:
-   ```bash
-   cd Site
-   python manage.py runserver
-   ```
+The core logic resides in the `download` view, which follows a strict pipeline:
 
-## How it works:
+- **Metadata Extraction:** Pulls track titles, artists, and high-res album art from Spotify.
+    
+- **Sanitization:** Cleans strings to ensure filesystem compatibility across different OS environments.
+    
+- **Concurrent Execution:** Uses `asyncio.gather` with defined chunk sizes to download audio while managing rate limits and system resources.
+    
+- **Tagging:** Files are processed via `eyed3` to embed cover art and metadata directly into the MP3.
+    
+- **Cleanup:** The system bundles files into a ZIP archive for the user and performs an immediate cleanup of the local server storage.
+    
 
-1. the user generates a spotify devloper client id and secret
-   - note that these creds grant access to one spotify account at first - the user's
-2. the site uses these creds to authorize the users account using spotify auth flow and a callback url to get a token
-3. this token is used to go through the users music library and generate dynamic django with download links for all their songs, albums etc.
-4. when the user wants to download a song or playlist, it is excecuted as a concurrent thread on the server inside of a new tab
-   - it gathers the metadata and creates an optimal youtube search with keywords such as the name and artist
-   - it then queries youtube and downloads the video of the song
-   - it then uses ffmpeg to convert the file to mp3 and tags it with eyed3
-   - then it serves it as a zipfile back to the user
-5. after the http response is returned, I use a finally block for garbage collection!!!
+---
 
-## next steps:
+## Future Improvements
 
-although I have better things to work on nowadays, next steps for this project would be having a more user-friendly loading screen. When users have extremely large libraries the site can take a while and doesn't inspire much confidence.
-
+- **Robust Error Handling:** Replacing generic `try/except` blocks with specific exception logging to better track failed downloads or tagging errors.
+    
+- **Task Queuing:** Migrating long-running download tasks from the request-response cycle to a worker-based system like **Celery**.
+    
+- **Dynamic Throttling:** Implementing a more sophisticated rate-limiting algorithm to better navigate external site protections.
