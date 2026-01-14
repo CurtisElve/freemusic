@@ -41,14 +41,14 @@ staticfiles/
 # Project Specific Downloads & Media
 # Based on your README and file list, ignoring the music folder and video files
 music/
-Site/*.mkv
-Site/cookies.txt
+**/*.mkv
+**/cookies.txt
 
 # Sensitive Information
 .env
 
 # OS Specific
-.DS_Store
+**/.DS_Store
 Thumbs.db
 
 # IDEs
