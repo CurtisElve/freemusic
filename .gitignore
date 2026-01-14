@@ -12,3 +12,45 @@ lib
 **/*.pyc
 *.sqlite3
 music
+# Python / Virtual Environment
+venv/
+.venv/
+env/
+bin/
+include/
+lib/
+share/
+pyvenv.cfg
+Include/
+Lib/
+Scripts/
+
+# Python Cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.coverage
+
+# Django Specific
+db.sqlite3
+staticfiles/
+*.log
+
+# Project Specific Downloads & Media
+# Based on your README and file list, ignoring the music folder and video files
+music/
+Site/*.mkv
+Site/cookies.txt
+
+# Sensitive Information
+.env
+
+# OS Specific
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
